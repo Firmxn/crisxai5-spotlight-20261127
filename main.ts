@@ -8,10 +8,11 @@ mkdirSync(OUTPUT_DIR, { recursive: true });
 try {
   const raw = readFileSync(join(BOT_DIR, 'POST.json'), 'utf8');
   const parsed = JSON.parse(raw) as { url?: unknown };
-  if (typeof parsed.url !== 'string' || !parsed.url.startsWith('https://')) {
+  const url = typeof parsed.url === 'string' ? parsed.url.trim() : '';
+  if (!url.startsWith('https://')) {
     throw new Error('POST.json missing valid https url');
   }
-  writeFileSync(join(OUTPUT_DIR, 'POST.json'), JSON.stringify({ url: parsed.url.trim() }) + '\n');
+  writeFileSync(join(OUTPUT_DIR, 'POST.json'), JSON.stringify({ url }) + '\n');
 } catch (err) {
   console.error(`POST.json could not be processed from ${BOT_DIR}: ${(err as Error).message}`);
   process.exit(1);
